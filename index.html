@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ErozBotV1 — Dashboard de performance</title>
+<style>
+  :root {
+    --bg: #232220;
+    --card-bg: #2D2C29;
+    --text-primary: #F1EFE8;
+    --text-secondary: #B4B2A9;
+    --text-tertiary: #837F77;
+    --border: #46453F;
+    --green: #5DCAA5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  .card {
+    max-width: 460px;
+    width: 100%;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.25rem 2rem;
+    text-align: center;
+  }
+  .tag { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green); }
+  h1 { font-size: 22px; font-weight: 600; margin: 10px 0 6px; }
+  p { font-size: 14px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.75rem; }
+  .btn {
+    display: inline-block; width: 100%; background: var(--green); color: #16302A;
+    font-weight: 600; font-size: 15px; padding: 14px; border-radius: 10px;
+    text-decoration: none; margin-bottom: 12px;
+  }
+  .btn:hover { background: #4FB897; }
+  .steps { text-align: left; font-size: 13px; color: var(--text-secondary); margin-top: 1.75rem; border-top: 1px solid var(--border); padding-top: 1.25rem; }
+  .steps li { margin-bottom: 8px; line-height: 1.5; }
+  footer { margin-top: 1.5rem; font-size: 11px; color: var(--text-tertiary); }
+</style>
+</head>
+<body>
+  <div class="card">
+    <span class="tag">ErozBotV1</span>
+    <h1>Dashboard de performance</h1>
+    <p>Baixe o arquivo abaixo para acompanhar seus próprios pregões. Cada pessoa edita e salva a sua cópia individualmente.</p>
+    <a class="btn" href="dashboard_win_automatico.html" download>Baixar dashboard (.html)</a>
+    <a class="btn" style="background:transparent; color:var(--text-primary); border:1px solid var(--border);" href="dashboard_win_automatico.html" target="_blank">Abrir no navegador</a>
+    <ol class="steps">
+      <li>Baixe o arquivo no botão acima.</li>
+      <li>Abra-o no seu navegador (duplo clique).</li>
+      <li>Registre seus pregões dia a dia na tabela.</li>
+      <li>Clique em "Salvar alterações" para guardar seu progresso.</li>
+    </ol>
+    <footer>Base oficial de validação · Atualizado pregão a pregão</footer>
+  </div>
+</body>
+</html>
