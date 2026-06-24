@@ -6,62 +6,119 @@
 <title>ErozBotV1 — Dashboard de performance</title>
 <style>
   :root {
-    --bg: #232220;
+    --bg: #1A1917;
+    --bg-soft: #232220;
     --card-bg: #2D2C29;
     --text-primary: #F1EFE8;
     --text-secondary: #B4B2A9;
     --text-tertiary: #837F77;
-    --border: #46453F;
+    --border: #3C3B36;
     --green: #5DCAA5;
+    --green-dark: #16302A;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: -apple-system, "Segoe UI", Arial, sans-serif;
     background: var(--bg);
     color: var(--text-primary);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
+    line-height: 1.5;
   }
-  .card {
-    max-width: 460px;
-    width: 100%;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 2.25rem 2rem;
-    text-align: center;
-  }
-  .tag { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green); }
-  h1 { font-size: 22px; font-weight: 600; margin: 10px 0 6px; }
-  p { font-size: 14px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.75rem; }
-  .btn {
-    display: inline-block; width: 100%; background: var(--green); color: #16302A;
-    font-weight: 600; font-size: 15px; padding: 14px; border-radius: 10px;
-    text-decoration: none; margin-bottom: 12px;
-  }
-  .btn:hover { background: #4FB897; }
-  .steps { text-align: left; font-size: 13px; color: var(--text-secondary); margin-top: 1.75rem; border-top: 1px solid var(--border); padding-top: 1.25rem; }
-  .steps li { margin-bottom: 8px; line-height: 1.5; }
-  footer { margin-top: 1.5rem; font-size: 11px; color: var(--text-tertiary); }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 1.5rem; }
+
+  nav { padding: 1.5rem 0; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-weight: 700; font-size: 16px; letter-spacing: 0.02em; }
+  .logo span { color: var(--green); }
+  .nav-tag { font-size: 11px; color: var(--text-tertiary); border: 1px solid var(--border); padding: 4px 10px; border-radius: 20px; }
+
+  .hero { text-align: center; padding: 3rem 0 2.5rem; }
+  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); margin-bottom: 14px; }
+  h1 { font-size: 34px; font-weight: 700; line-height: 1.15; margin-bottom: 16px; }
+  .hero p { font-size: 15.5px; color: var(--text-secondary); max-width: 480px; margin: 0 auto 28px; }
+
+  .cta-row { display: flex; flex-direction: column; gap: 10px; max-width: 320px; margin: 0 auto; }
+  .btn { display: block; padding: 15px; border-radius: 10px; font-weight: 600; font-size: 15px; text-decoration: none; text-align: center; }
+  .btn-primary { background: var(--green); color: var(--green-dark); }
+  .btn-ghost { background: transparent; color: var(--text-primary); border: 1px solid var(--border); }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border-radius: 14px; overflow: hidden; margin: 2.5rem 0; }
+  .stat { background: var(--bg-soft); padding: 1.5rem 1rem; text-align: center; }
+  .stat-value { font-size: 22px; font-weight: 700; color: var(--green); }
+  .stat-label { font-size: 11.5px; color: var(--text-tertiary); margin-top: 4px; }
+
+  .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); text-align: center; margin-bottom: 10px; }
+  .section-title { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 2rem; }
+
+  .steps { display: grid; gap: 14px; margin-bottom: 3rem; }
+  .step { display: flex; gap: 14px; align-items: flex-start; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.1rem 1.25rem; }
+  .step-num { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--green); color: var(--green-dark); font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+  .step-text { font-size: 14px; color: var(--text-secondary); padding-top: 3px; }
+  .step-text strong { color: var(--text-primary); }
+
+  .note-card { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 3rem; font-size: 13.5px; color: var(--text-secondary); }
+  .note-card strong { color: var(--text-primary); }
+
+  footer { text-align: center; padding: 2rem 0 3rem; font-size: 12px; color: var(--text-tertiary); border-top: 1px solid var(--border); }
 </style>
 </head>
 <body>
-  <div class="card">
-    <span class="tag">ErozBotV1</span>
-    <h1>Dashboard de performance</h1>
-    <p>Baixe o arquivo abaixo para acompanhar seus próprios pregões. Cada pessoa edita e salva a sua cópia individualmente.</p>
-    <a class="btn" href="dashboard%20win%20automatico.html" download>Baixar dashboard (.html)</a>
-    <a class="btn" style="background:transparent; color:var(--text-primary); border:1px solid var(--border);" href="dashboard%20win%20automatico.html" target="_blank">Abrir no navegador</a>
-    <ol class="steps">
-      <li>Baixe o arquivo no botão acima.</li>
-      <li>Abra-o no seu navegador (duplo clique).</li>
-      <li>Registre seus pregões dia a dia na tabela.</li>
-      <li>Clique em "Salvar alterações" para guardar seu progresso.</li>
-    </ol>
-    <footer>Base oficial de validação · Atualizado pregão a pregão</footer>
+<div class="wrap">
+
+  <nav>
+    <div class="logo">Eroz<span>BotV1</span></div>
+    <div class="nav-tag">Base oficial de validação</div>
+  </nav>
+
+  <section class="hero">
+    <div class="eyebrow">Dashboard de performance</div>
+    <h1>Acompanhe seus pregões com clareza, todos os dias</h1>
+    <p>Baixe o dashboard, registre seus resultados diários e salve seu progresso — tudo individual, direto no seu navegador, sem depender de nuvem ou login.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="dashboard%20win%20automatico.html" download>Baixar dashboard (.html)</a>
+      <a class="btn btn-ghost" href="dashboard%20win%20automatico.html" target="_blank">Abrir no navegador</a>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value">15</div>
+      <div class="stat-label">Pregões registrados</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">73%</div>
+      <div class="stat-label">Consistência (ICR)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">20</div>
+      <div class="stat-label">Meta da Fase 1</div>
+    </div>
   </div>
+
+  <div class="section-label">Como funciona</div>
+  <h2 class="section-title">Quatro passos pra começar</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text"><strong>Baixe o arquivo</strong> no botão acima — é um único arquivo HTML, sem instalação.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text"><strong>Abra no navegador</strong> (duplo clique no arquivo baixado).</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text"><strong>Registre seus pregões</strong> dia a dia, direto na tabela ou pelo formulário.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-text"><strong>Clique em "Salvar alterações"</strong> para guardar seu progresso em um arquivo no seu computador.</div>
+    </div>
+  </div>
+
+  <div class="note-card">
+    <strong>Importante:</strong> cada pessoa que baixa o dashboard edita e salva a própria cópia, de forma independente — não é colaborativo em tempo real. Pra continuar de onde parou depois de fechar o navegador, use o botão "Abrir arquivo salvo" dentro do próprio dashboard.
+  </div>
+
+  <footer>ErozBotV1 · Base oficial de validação · Atualizado pregão a pregão</footer>
+</div>
 </body>
 </html>
