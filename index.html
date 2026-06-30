@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório de Performance — ErozBotV1</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #232220;
+    --card-bg: #2D2C29;
+    --surface: #34332F;
+    --text-primary: #F1EFE8;
+    --text-secondary: #B4B2A9;
+    --text-tertiary: #837F77;
+    --border: #46453F;
+    --green: #5DCAA5;
+    --green-bg: #20342B;
+    --green-dark: #9FE1CB;
+    --red: #F09995;
+    --red-bg: #3B2422;
+    --red-dark: #F7C1C1;
+    --blue: #6FA8DC;
+    --blue-bg: #1E2D3B;
+    --blue-dark: #B5D4F4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.5;
+    padding: 2rem 1.5rem 4rem;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  header { margin-bottom: 1.75rem; }
+  h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+  .subtitle { font-size: 14px; color: var(--text-secondary); }
+  .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; background: var(--surface); color: var(--text-secondary); margin-top: 8px; letter-spacing: 0.03em; text-transform: uppercase; }
+
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 1rem; }
+  .card { background: var(--surface); border-radius: 10px; padding: 1rem 1.1rem; }
+  .card-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
+  .card-value { font-size: 23px; font-weight: 600; }
+  .card-value.green { color: var(--green); }
+  .card-value.red { color: var(--red); }
+  .card-input {
+    width: 100%; font-size: 23px; font-weight: 600; background: transparent; border: none;
+    color: var(--text-primary); font-family: inherit; padding: 0;
+  }
+  .card-input::placeholder { color: var(--text-tertiary); font-weight: 400; font-size: 16px; }
+  .card-input:focus { outline: none; }
+  .table-input {
+    width: 90px; font-size: 13px; padding: 5px 7px; border: 1px solid var(--border);
+    border-radius: 6px; background: var(--card-bg); color: var(--text-primary); font-family: inherit;
+  }
+  .table-input:focus { outline: none; border-color: var(--blue); }
+  .table-input::placeholder { color: var(--text-tertiary); }
+  .table-input-text { width: 100%; min-width: 140px; }
+  .card-sub { font-size: 11px; color: var(--text-tertiary); margin-top: 3px; }
+
+  .progress-bar { background: var(--border); border-radius: 5px; height: 8px; margin-top: 4px; overflow: hidden; }
+  .progress-fill { height: 8px; background: var(--green); transition: width 0.4s; }
+  .progress-label { font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
+
+  .section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); margin: 2rem 0 0.9rem; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+
+  .chart-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+  .chart-wrap { position: relative; width: 100%; height: 230px; }
+
+  .table-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 0.5rem; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 560px; }
+  th { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.03em; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface); }
+
+  .badge { display: inline-block; font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+  .badge.pos { background: var(--green-bg); color: var(--green-dark); }
+  .badge.neg { background: var(--red-bg); color: var(--red-dark); }
+  .badge.fer { background: var(--surface); color: var(--text-secondary); }
+
+  .form-card { background: var(--surface); border-radius: 12px; padding: 1.25rem 1.5rem; }
+  .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 14px; }
+  .form-group label { font-size: 11.5px; color: var(--text-secondary); display: block; margin-bottom: 5px; font-weight: 600; }
+  .form-group input, .form-group select {
+    width: 100%; font-size: 13.5px; padding: 8px 10px; border: 1px solid var(--border);
+    border-radius: 7px; background: var(--card-bg); color: var(--text-primary); font-family: inherit;
+  }
+  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--blue); }
+
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  button { font-size: 13.5px; font-weight: 600; padding: 9px 20px; border-radius: 7px; cursor: pointer; border: none; font-family: inherit; }
+  .btn-primary { background: var(--green); color: #16302A; }
+  .btn-primary:hover { background: #4FB897; }
+  .btn-secondary { background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--surface); }
+
+  .toolbar { display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem; flex-wrap: wrap; }
+  .hint { font-size: 12px; color: var(--text-tertiary); margin-top: 10px; }
+  footer { margin-top: 2.5rem; font-size: 12px; color: var(--text-tertiary); text-align: center; }
+  input[type="file"] { display: none; }
+
+  .hero-wrap { max-width: 760px; margin: 0 auto 3rem; }
+  .hero-nav { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0 2rem; }
+  .hero-logo { font-weight: 700; font-size: 16px; letter-spacing: 0.02em; }
+  .hero-logo span { color: var(--green); }
+  .hero-nav-tag { font-size: 11px; color: var(--text-tertiary); border: 1px solid var(--border); padding: 4px 10px; border-radius: 20px; }
+  .hero { text-align: center; padding-bottom: 1rem; }
+  .hero-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); margin-bottom: 14px; }
+  .hero h1 { font-size: 34px; font-weight: 700; line-height: 1.15; margin-bottom: 16px; }
+  .hero p { font-size: 15.5px; color: var(--text-secondary); max-width: 480px; margin: 0 auto; }
+</style>
+</head>
+<body>
+<div class="hero-wrap">
+  <nav class="hero-nav">
+    <div class="hero-logo">Eroz<span>BotV1</span></div>
+    <div class="hero-nav-tag">Base oficial de validação</div>
+  </nav>
+  <section class="hero">
+    <div class="hero-eyebrow">Dashboard de performance</div>
+    <h1>Acompanhe seus pregões com clareza, todos os dias</h1>
+    <p>Registre seus resultados diários e acompanhe sua evolução — tudo salvo automaticamente neste navegador.</p>
+  </section>
+</div>
+<div class="wrap">
+
+  <header>
+    <h2 style="font-size:18px; font-weight:600; margin-bottom:4px;">Relatório de performance</h2>
+    <p class="subtitle">Estratégia ErozBotV1 — controle diário de validação estatística</p>
+  </header>
+
+  <div class="metrics" id="metrics"></div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+  <p class="progress-label" id="prog-label"></p>
+
+  <p class="section-title">Resultado diário (R$)</p>
+  <div class="chart-card">
+    <div class="chart-wrap"><canvas id="chartBar" role="img" aria-label="Gráfico de resultado diário em reais"></canvas></div>
+  </div>
+
+  <p class="section-title">Curva de capital (R$)</p>
+  <div class="chart-card">
+    <div class="chart-wrap" style="height:170px;"><canvas id="chartCapital" role="img" aria-label="Curva de capital acumulado em reais"></canvas></div>
+  </div>
+
+  <p class="section-title">Histórico de pregões</p>
+  <div class="table-card">
+    <table>
+      <thead><tr><th>Data</th><th>Máx. Neg.</th><th>Máx. Pos.</th><th>Lucro diário</th><th>Custos Op.</th><th>Lucro Líquido/Dia</th><th>% Lucro</th><th>Observações</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <p class="section-title">Registrar novo pregão</p>
+  <div class="form-card">
+    <div class="form-grid">
+      <div class="form-group"><label>Data</label><input type="date" id="f-data"></div>
+      <div class="form-group"><label>Máx. negativo (R$)</label><input type="number" id="f-neg" placeholder="Ex: -150"></div>
+      <div class="form-group"><label>Máx. positivo (R$)</label><input type="number" id="f-pos" placeholder="Ex: 1800"></div>
+      <div class="form-group"><label>Lucro diário (R$)</label><input type="number" id="f-lucro" placeholder="Ex: 1200"></div>
+      <div class="form-group"><label>Custos operacionais (R$)</label><input type="number" id="f-custos" placeholder="Ex: 12"></div>
+      <div class="form-group"><label>Resultado</label>
+        <select id="f-res"><option value="pos">Positivo</option><option value="neg">Negativo</option><option value="fer">Feriado / sem pregão</option></select>
+      </div>
+      <div class="form-group"><label>Observações</label><input type="text" id="f-obs" placeholder="Opcional"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="addPregao()">Adicionar pregão</button>
+      <button class="btn-secondary" onclick="removeLast()">Remover último</button>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn-secondary" onclick="exportJSON()">Exportar backup (.json)</button>
+    <button class="btn-secondary" onclick="document.getElementById('import-file').click()">Importar backup (.json)</button>
+    <button class="btn-secondary" onclick="resetData()">Restaurar dados originais</button>
+    <input type="file" id="import-file" accept=".json" onchange="importJSON(event)">
+  </div>
+  <p class="hint" id="save-hint">Seus dados são salvos automaticamente neste navegador a cada alteração — não precisa clicar em nada. Use "Exportar backup" se quiser uma cópia de segurança ou levar os dados pra outro celular/navegador.</p>
+
+  <footer>ErozBotV1 · Base oficial de validação · Atualizado pregão a pregão</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const ORIGINAL_DATA = [
+  { data:'01/06', neg:-108, pos:1920, lucro:1819, irl:94.7, res:'pos', obs:'Coleta iniciada' },
+  { data:'02/06', neg:null, pos:620, lucro:310, irl:50.0, res:'pos', obs:'Dentro do plano' },
+  { data:'03/06', neg:null, pos:1750, lucro:1647, irl:94.0, res:'pos', obs:'Runner contribuiu' },
+  { data:'04/06', neg:null, pos:null, lucro:null, irl:null, res:'fer', obs:'Feriado' },
+  { data:'05/06', neg:-134, pos:573, lucro:179, irl:31.0, res:'pos', obs:'Continuidade estatística' },
+  { data:'08/06', neg:null, pos:54, lucro:-399, irl:0.0, res:'neg', obs:'Primeiro stop diário' },
+  { data:'09/06', neg:-196, pos:1570, lucro:1252, irl:79.7, res:'pos', obs:'Recuperação imediata' },
+  { data:'10/06', neg:0, pos:698, lucro:451, irl:64.6, res:'pos', obs:'Boa retenção do runner' },
+  { data:'11/06', neg:-387, pos:325, lucro:-387, irl:0.0, res:'neg', obs:'Drawdown controlado' },
+  { data:'12/06', neg:0, pos:2290, lucro:1548, irl:67.6, res:'pos', obs:'Fechamento semanal positivo' },
+  { data:'15/06', neg:-96, pos:402, lucro:573, irl:142.5, res:'pos', obs:'Fechamento no topo do movimento' },
+  { data:'16/06', neg:0, pos:520, lucro:356, irl:68.5, res:'pos', obs:'' },
+  { data:'17/06', neg:-422, pos:0, lucro:-422, irl:0.0, res:'neg', obs:'' },
+  { data:'18/06', neg:-53, pos:280, lucro:-403, irl:0.0, res:'neg', obs:'' },
+  { data:'19/06', neg:-215, pos:220, lucro:145, irl:65.9, res:'pos', obs:'' },
+];
+
+let pregoes = JSON.parse(JSON.stringify(ORIGINAL_DATA));
+let barChart, irlChart;
+let capitalInvestido = null;
+const META_PREGOES = 20;
+
+function calcMetrics() {
+  const real = pregoes.filter(p => p.res !== 'fer');
+  const pos = real.filter(p => p.res === 'pos');
+  const neg = real.filter(p => p.res === 'neg');
+  const lucroTotal = real.reduce((s, p) => s + (p.lucro || 0), 0);
+  const icr = real.length > 0 ? (pos.length / real.length * 100) : 0;
+  const irlValues = real.filter(p => p.irl !== null);
+  const irlMedia = irlValues.length > 0 ? irlValues.reduce((s, p) => s + p.irl, 0) / irlValues.length : 0;
+  return { total: real.length, pos: pos.length, neg: neg.length, lucro: lucroTotal, icr, irlMedia };
+}
+
+function brl(v) {
+  return 'R$ ' + Math.abs(v).toLocaleString('pt-BR');
+}
+
+function renderMetrics() {
+  const m = calcMetrics();
+  const prog = Math.min(100, (m.total / META_PREGOES) * 100);
+  document.getElementById('prog-fill').style.width = prog + '%';
+  document.getElementById('prog-label').textContent = m.total + ' / ' + META_PREGOES + ' pregões — meta da Fase 1 de validação';
+  document.getElementById('metrics').innerHTML = `
+    <div class="card"><div class="card-label">Capital investido (R$)</div><input class="card-input" type="number" id="f-capital-investido" value="${capitalInvestido !== null ? capitalInvestido : ''}" oninput="onCapitalInput(this.value)" placeholder="Inserir valor"></div>
+    <div class="card"><div class="card-label">Lucro acumulado</div><div class="card-value ${m.lucro >= 0 ? 'green' : 'red'}">R$ ${m.lucro.toLocaleString('pt-BR')}</div><div class="card-sub" id="retorno-display"></div></div>
+    <div class="card"><div class="card-label">ICR (consistência)</div><div class="card-value">${m.icr.toFixed(1)}%</div><div class="card-sub">${m.pos} positivos / ${m.neg} negativos</div></div>
+    <div class="card"><div class="card-label">% Lucro médio</div><div class="card-value">${m.irlMedia.toFixed(1)}%</div></div>
+  `;
+  updateRetorno();
+}
+
+function onCapitalInput(val) {
+  capitalInvestido = val === '' ? null : parseFloat(val);
+  updateRetorno();
+  saveLocal();
+}
+
+function updateRetorno() {
+  const el = document.getElementById('retorno-display');
+  if (!el) return;
+  const m = calcMetrics();
+  if (capitalInvestido && capitalInvestido > 0) {
+    const retorno = (m.lucro / capitalInvestido) * 100;
+    el.textContent = 'Retorno de ' + retorno.toFixed(2) + '% sobre o capital investido';
+  } else {
+    el.textContent = 'Informe o capital investido para calcular o retorno %';
+  }
+}
+
+function renderTable() {
+  document.getElementById('tbody').innerHTML = pregoes.map((p, idx) => `
+    <tr>
+      <td style="font-weight:600">${p.data}</td>
+      <td style="color:${p.neg < 0 ? 'var(--red)' : 'var(--text-secondary)'}">${p.neg === null ? '?' : p.neg === 0 ? '—' : 'R$ ' + Math.abs(p.neg)}</td>
+      <td style="color:var(--green)">${p.pos !== null ? 'R$ ' + p.pos : '—'}</td>
+      <td style="font-weight:600; color:${p.lucro > 0 ? 'var(--green)' : p.lucro < 0 ? 'var(--red)' : 'var(--text-secondary)'}">${p.lucro !== null ? 'R$ ' + Math.abs(p.lucro).toLocaleString('pt-BR') : '—'}</td>
+      <td><input type="number" class="table-input" value="${p.custos !== null && p.custos !== undefined ? p.custos : ''}" placeholder="—" oninput="updateCustos(${idx}, this.value)"></td>
+      <td id="liq-${idx}" style="font-weight:600; color:${p.lucro === null ? 'var(--text-secondary)' : (p.lucro - (p.custos || 0)) >= 0 ? 'var(--green)' : 'var(--red)'}">${p.lucro === null ? '—' : brl(p.lucro - (p.custos || 0))}</td>
+      <td>${p.irl !== null ? p.irl.toFixed(1) + '%' : '—'}</td>
+      <td><input type="text" class="table-input table-input-text" value="${p.obs || ''}" placeholder="Adicionar observação" oninput="updateObs(${idx}, this.value)"></td>
+    </tr>
+  `).join('');
+}
+
+function updateObs(idx, val) {
+  pregoes[idx].obs = val;
+  saveLocal();
+}
+
+function updateCustos(idx, val) {
+  pregoes[idx].custos = val === '' ? null : parseFloat(val);
+  const p = pregoes[idx];
+  const cell = document.getElementById('liq-' + idx);
+  if (cell && p.lucro !== null) {
+    const liquido = p.lucro - (p.custos || 0);
+    cell.textContent = brl(liquido);
+    cell.style.color = liquido >= 0 ? 'var(--green)' : 'var(--red)';
+  }
+  saveLocal();
+}
+
+function renderCharts() {
+  const real = pregoes.filter(p => p.res !== 'fer');
+  const labels = real.map(p => p.data);
+  const lucros = real.map(p => p.lucro || 0);
+  const colors = lucros.map(v => v >= 0 ? '#5DCAA5' : '#F09995');
+
+  let acumulado = 0;
+  const capital = lucros.map(v => { acumulado += v; return acumulado; });
+
+  if (barChart) barChart.destroy();
+  barChart = new Chart(document.getElementById('chartBar'), {
+    type: 'bar',
+    data: { labels, datasets: [{ data: lucros, backgroundColor: colors, borderRadius: 4, borderWidth: 0 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { font: { size: 11 }, color: '#A6A29A', autoSkip: false }, grid: { display: false } },
+        y: { ticks: { font: { size: 11 }, color: '#A6A29A', callback: v => 'R$ ' + v.toLocaleString('pt-BR') }, grid: { color: 'rgba(255,255,255,0.07)' } }
+      }
+    }
+  });
+
+  if (irlChart) irlChart.destroy();
+  irlChart = new Chart(document.getElementById('chartCapital'), {
+    type: 'line',
+    data: { labels, datasets: [{ data: capital, borderColor: '#6FA8DC', backgroundColor: 'rgba(111,168,220,0.14)', tension: 0.3, fill: true, pointRadius: 4, pointBackgroundColor: '#6FA8DC', borderWidth: 1.5 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { font: { size: 11 }, color: '#A6A29A', autoSkip: false }, grid: { display: false } },
+        y: { ticks: { font: { size: 11 }, color: '#A6A29A', callback: v => 'R$ ' + v.toLocaleString('pt-BR') }, grid: { color: 'rgba(255,255,255,0.07)' } }
+      }
+    }
+  });
+}
+
+function renderAll() { renderMetrics(); renderTable(); renderCharts(); }
+
+function addPregao() {
+  const dataRaw = document.getElementById('f-data').value;
+  const neg = document.getElementById('f-neg').value === '' ? null : parseFloat(document.getElementById('f-neg').value);
+  const pos = document.getElementById('f-pos').value === '' ? null : parseFloat(document.getElementById('f-pos').value);
+  const lucroRaw = document.getElementById('f-lucro').value;
+  const custos = document.getElementById('f-custos').value === '' ? null : parseFloat(document.getElementById('f-custos').value);
+  const res = document.getElementById('f-res').value;
+  const obs = document.getElementById('f-obs').value;
+
+  if (!dataRaw) { alert('Informe a data do pregão.'); return; }
+  if (res !== 'fer' && lucroRaw === '') { alert('Informe o lucro diário do dia.'); return; }
+
+  const lucro = res === 'fer' ? null : parseFloat(lucroRaw);
+  const d = new Date(dataRaw + 'T00:00:00');
+  const dataFmt = String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0');
+
+  let irl = null;
+  if (res !== 'fer' && pos && pos > 0) irl = parseFloat(Math.max(0, (lucro / pos) * 100).toFixed(1));
+
+  pregoes.push({ data: dataFmt, neg, pos, lucro, custos, irl, res, obs });
+
+  ['f-data','f-neg','f-pos','f-lucro','f-custos','f-obs'].forEach(id => document.getElementById(id).value = '');
+  renderAll();
+  saveLocal();
+}
+
+function removeLast() {
+  if (pregoes.length === 0) return;
+  if (confirm('Remover o último pregão registrado (' + pregoes[pregoes.length - 1].data + ')?')) {
+    pregoes.pop();
+    renderAll();
+    saveLocal();
+  }
+}
+
+function resetData() {
+  if (confirm('Restaurar os dados originais? Isso descarta os pregões adicionados nesta sessão.')) {
+    pregoes = JSON.parse(JSON.stringify(ORIGINAL_DATA));
+    capitalInvestido = null;
+    renderAll();
+    saveLocal();
+  }
+}
+
+function buildDataPayload() {
+  return JSON.stringify({ pregoes, capitalInvestido }, null, 2);
+}
+
+function loadDataPayload(parsed) {
+  if (Array.isArray(parsed)) {
+    pregoes = parsed;
+  } else if (parsed && Array.isArray(parsed.pregoes)) {
+    pregoes = parsed.pregoes;
+    capitalInvestido = typeof parsed.capitalInvestido === 'number' ? parsed.capitalInvestido : null;
+  } else {
+    throw new Error('Formato inválido');
+  }
+}
+
+const LOCAL_KEY = 'erozbotv1_dashboard_dados';
+
+function saveLocal() {
+  try {
+    localStorage.setItem(LOCAL_KEY, buildDataPayload());
+    const hintEl = document.getElementById('save-hint');
+    if (hintEl) hintEl.textContent = 'Salvo automaticamente neste navegador às ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + '.';
+  } catch (err) {
+    const hintEl = document.getElementById('save-hint');
+    if (hintEl) hintEl.textContent = 'Não foi possível salvar automaticamente neste navegador. Use "Exportar backup" para não perder os dados.';
+  }
+}
+
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(LOCAL_KEY);
+    if (!raw) return false;
+    loadDataPayload(JSON.parse(raw));
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+function exportJSON() {
+  const blob = new Blob([buildDataPayload()], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'win_automatico_dados_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      loadDataPayload(parsed);
+      renderAll();
+      saveLocal();
+      const hintEl = document.getElementById('save-hint');
+      if (hintEl) hintEl.textContent = 'Backup carregado: ' + pregoes.length + ' pregões.';
+    } catch (err) {
+      alert('Não foi possível ler o arquivo. Verifique se é um JSON salvo por este dashboard.');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+loadLocal();
+renderAll();
+</script>
+</body>
+</html>
